@@ -1,0 +1,37 @@
+[package]
+name = "cpolars"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies.polars]
+version = "0.27.2"
+features = [
+	"arg_where",
+	"checked_arithmetic",
+	"concat_str",
+	"cross_join",
+	"csv-file",
+	"cum_agg",
+	"default",
+	"dtype-datetime",
+	"dtype-struct",
+	"dtype-categorical",
+	"dynamic_groupby",
+	"ipc",
+	"is_in",
+	"json",
+	"lazy",
+	"object",
+	"parquet",
+	"random",
+	"rolling_window",
+	"rows",
+	"serde",
+	"serde-lazy",
+	"strings",
+	"strings",
+	"to_dummies",
+]

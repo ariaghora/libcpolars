@@ -1,0 +1,10 @@
+language = "C"
+
+[export]
+exclude = ["DataFrame"]
+
+[export.rename]
+"DataFrame" = "void"
+"Expr" = "void"
+"LazyFrame" = "void"
+"Series" = "void"
