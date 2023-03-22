@@ -1,7 +1,10 @@
 use std::ffi::c_char;
 
 use crate::common::{cstr_to_str, to_raw};
-use polars::{lazy::dsl::Expr, prelude::*};
+use polars::{
+    lazy::dsl::{binary_expr, Expr, Operator},
+    prelude::*,
+};
 
 #[no_mangle]
 pub extern "C" fn lcp_alloc_expr_arr(len: i32) -> *mut *mut Expr {
@@ -15,9 +18,9 @@ pub extern "C" fn lcp_alloc_expr_arr(len: i32) -> *mut *mut Expr {
 }
 
 #[no_mangle]
-pub extern "C" fn lcp_set_expr_arr(expr_arr: *mut *mut Expr, expr: *mut Expr, at: i32) {
-    let expr_arr = unsafe { std::slice::from_raw_parts_mut(expr_arr, at as usize + 1) };
-    expr_arr[at as usize] = expr;
+pub unsafe extern "C" fn lcp_expr_add(e1: *mut Expr, e2: *mut Expr) -> *mut Expr {
+    let res = binary_expr((&*e1).clone(), Operator::Plus, (&*e2).clone());
+    to_raw(res)
 }
 
 #[no_mangle]
@@ -44,7 +47,19 @@ pub extern "C" fn lcp_expr_i32(val: i32) -> *mut Expr {
 }
 
 #[no_mangle]
+pub extern "C" fn lcp_expr_f32(val: f32) -> *mut Expr {
+    let val = LiteralValue::Float32(val);
+    to_raw(Expr::Literal(val))
+}
+
+#[no_mangle]
 pub extern "C" fn lcp_expr_str(val: *const c_char) -> *mut Expr {
     let val = unsafe { LiteralValue::Utf8(cstr_to_str(val).to_string()) };
     to_raw(Expr::Literal(val))
+}
+
+#[no_mangle]
+pub extern "C" fn lcp_set_expr_arr(expr_arr: *mut *mut Expr, expr: *mut Expr, at: i32) {
+    let expr_arr = unsafe { std::slice::from_raw_parts_mut(expr_arr, at as usize + 1) };
+    expr_arr[at as usize] = expr;
 }
